@@ -1,0 +1,91 @@
+<!-- extend 继承（模板渲染） -->
+{{extend './_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'body'}}
+<section class="container">
+  <ul class="media-list" id="media-list">
+    <!-- art-template模板导入 -->
+  </ul>
+  <nav aria-label="Page navigation">
+    <!-- 事件委托 TODO -->
+    <ul class="pagination" id="pageination">
+      <li>
+        <a href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+      </li>
+      <li class="active"><a href="#">1</a></li>
+      <li><a href="#">2</a></li>
+      <li><a href="#">3</a></li>
+      <li><a href="#">4</a></li>
+      <li><a href="#">5</a></li>
+      <li>
+        <a href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+      </li>
+    </ul>
+  </nav>
+</section>
+{{/block}}
+{{block 'script'}}
+  <script src="/node_modules/art-template/lib/template-web.js"></script>
+  <script id="template" type="text/html">
+    <% for(var i = 0; list && i < list.length; i++){ %>
+      <li class="media">
+        <div class="media-left">
+          <a href="#">
+              <img width="40" height="40" class="media-object" src="<%= list[i].author.avatar_url %>"
+                title="<%= list[i].author.loginname %>" alt="<%= list[i].author.loginname %>">
+            </a>
+        </div>
+        <div class="media-body">
+          <span class="visit-wrapper">
+            <span class="reply">
+              <%= list[i].reply_count %>
+            </span>
+            <span class="visit">
+              /<%= list[i].visit_count %>
+            </span>
+          </span>
+          <% if (list[i].top) { %>
+          <span class="top">
+            置顶
+          </span>
+          <% } %>
+          <a class="title" href="/topic/show/<%= list[i].id %>">
+            <%= list[i].title %>
+          </a>
+        </div>
+        <div class="media-right">
+          <div class="last-reply-time"><%= $imports.time(list[i].last_reply_at) %>天前</div>
+        </div>
+      </li>
+    <% } %>
+  </script>
+  
+  <script>
+    var list = []
+    template.defaults.imports.time = function(value){
+      return Math.floor((new Date().valueOf() - new Date(value).valueOf()) / (24 * 60 * 60 * 1000))
+    };
+
+    $.ajax({
+      url: 'https://cnodejs.org/api/v1/topics?page=1&limit=5',
+      type: 'get',
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          list = data.data
+        }
+        // 参数'template'对应上一个script标签的id
+        var html = template('template', {
+          list
+        });
+        $('#media-list').html(html)
+      }
+    })
+  </script>
+{{/block}}

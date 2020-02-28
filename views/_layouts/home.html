@@ -1,0 +1,23 @@
+<!-- 不是真正渲染的页面，属于模板页，命名加'_' -->
+<!-- _partials是模板的组成部分 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>{{block 'title'}}默认标题{{/block}}</title>
+  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="/public/css/layout.css">
+  {{block 'head'}}{{/block}}
+</head>
+
+<body>
+  {{include '../_partials/header.html'}}
+  {{block 'body'}}{{/block}}
+  {{include '../_partials/footer.html'}}
+  <script src="/node_modules/jquery/dist/jquery.js"></script>
+  <script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+  {{block 'script'}}{{/block}}
+</body>
+
+</html>
